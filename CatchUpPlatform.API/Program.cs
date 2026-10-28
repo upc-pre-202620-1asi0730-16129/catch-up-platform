@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Localization Configuration
+builder.Services.AddLocalization();
+
 // Add Database Connection
 
 builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
@@ -29,5 +32,14 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
+
+// Localization Configuration
+var supportedCultures = new[] { "en", "en-US", "es", "es-PE" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+localizationOptions.ApplyCurrentCultureToResponseHeaders = true;
+app.UseRequestLocalization(localizationOptions);
 
 app.Run();
