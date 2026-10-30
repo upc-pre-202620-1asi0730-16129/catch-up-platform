@@ -1,3 +1,6 @@
+using CatchUpPlatform.API.News.Application.Internal.CommandServices;
+using CatchUpPlatform.API.News.Application.Internal.QueryServices;
+using CatchUpPlatform.API.News.Application.Services;
 using CatchUpPlatform.API.News.Domain.Repositories;
 using CatchUpPlatform.API.News.Infrastructure.Persistence.EntityFrameworkCore;
 using CatchUpPlatform.API.Shared.Domain.Repositories;
@@ -42,7 +45,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // News bounded context injection configuration
 builder.Services.AddScoped<IFavoriteSourceRepository, FavoriteSourceRepository>();
-
+builder.Services.AddScoped<IFavoriteSourceCommandService, FavoriteSourceCommandService>();
+builder.Services.AddScoped<IFavoriteSourceQueryService, FavoriteSourceQueryService>();
 
 
 var app = builder.Build();
