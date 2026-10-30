@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,6 +106,15 @@ builder.Services.AddScoped<IFavoriteSourceQueryService, FavoriteSourceQueryServi
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
+}
+
+// Configure the HTTP request pipeline.
+app.UseExceptionHandler();
 
 // Localization Configuration
 var supportedCultures = new[] { "en", "en-US", "es", "es-PE" };
@@ -114,5 +124,14 @@ var localizationOptions = new RequestLocalizationOptions()
     .AddSupportedUICultures(supportedCultures);
 localizationOptions.ApplyCurrentCultureToResponseHeaders = true;
 app.UseRequestLocalization(localizationOptions);
+
+app.UseHttpsRedirection();
+
+//app.UseAuthorization();
+
+// OpenAPI and Scalar are kept available in all environments to preserve the existing API explorer behavior.
+app.MapOpenApi();
+app.MapScalarApiReference();
+app.MapControllers();
 
 app.Run();
